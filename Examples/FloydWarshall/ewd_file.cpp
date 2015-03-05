@@ -28,6 +28,7 @@
 #include <limits>
 #include <stdexcept>
 #include <sstream>
+#include <utility>
 #include <math.h>
 #include "ewd_file.h"
 
@@ -77,10 +78,7 @@ void ewd_file::import_file(const std::string& name) throw(std::exception)
          ss << " invalid distance : " << d;
          throw std::runtime_error(ss.str());
       }
-      edges_.insert(
-            std::make_pair<std::pair<unsigned int , unsigned int>, float>(
-               std::make_pair<unsigned int, unsigned int>(v1, v2),
-               d));
+      edges_.insert(std::make_pair(std::make_pair(v1, v2), d));
    }
    std::cout << std::endl;
    ifs.close();
@@ -100,7 +98,7 @@ float ewd_file::dist(unsigned int v1, unsigned int v2) const {
    if (v1 == v2) 
       return 0.0f;
    std::map<std::pair<unsigned int, unsigned int>, float>::const_iterator ite;
-   ite = edges_.find(std::make_pair<unsigned int, unsigned int>(v1, v2));
+   ite = edges_.find(std::make_pair(v1, v2));
    if (ite == edges_.end()) 
       return huge_float;
    return ite->second;
@@ -117,10 +115,7 @@ void ewd_file::import_matrix(float* p, size_t size) throw(std::exception)
       for (int y = 0; y < nb_vector_; ++y) {
          float distance = p[x + (y * nb_vector_)];
          if (distance < huge_float) {
-            edges_.insert(
-                  std::make_pair<std::pair<unsigned int , unsigned int>, float>(
-                     std::make_pair<unsigned int, unsigned int>(x, y),
-                     distance));
+            edges_.insert(std::make_pair(std::make_pair(x, y), distance));
          }
       }
    }
