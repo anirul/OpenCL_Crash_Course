@@ -19,11 +19,18 @@ if (APPLE)
     )
 
     find_library(COCOA_LIBRARY Cocoa)
-    find_library(OPENGL_LIBRARY OpenGL)
-    find_library(OPENAL_LIBRARY OpenAL)
-    find_library(OPENCL_LIBRARY OpenCL)
     find_library(IOKIT_LIBRARY IOKit)
+    find_library(OPENAL_LIBRARY OpenAL)
+    find_library(OPENGL_LIBRARY OpenGL)
+    find_library(OPENCL_LIBRARY OpenCL)
 endif(APPLE)
+
+# read linux
+if (UNIX AND NOT APPLE)
+	find_library(OPENCL_LIBRARY OpenCL)
+	find_library(OPENGL_LIBRARY GL)
+	find_library(GLU_LIBRARY GLU)
+endif (UNIX AND NOT APPLE)
 
 find_package(Boost 1.54.0 REQUIRED COMPONENTS
     program_options
@@ -131,6 +138,7 @@ target_link_libraries(
     ${OPENCV_IMGPROC_LIB}
     ${Boost_LIBRARIES}
     ${OPENGL_LIBRARY}
+    ${GLU_LIBRARY}
     ${GLUT_LIB}
     ${OPENCL_LIBRARY}
 )
