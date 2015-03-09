@@ -5,6 +5,13 @@
 #include <vector>
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
+#include <chrono>
+
+using std::chrono::duration_cast;
+using std::chrono::nanoseconds;
+using std::chrono::microseconds;
+using std::chrono::milliseconds;
+using std::chrono::system_clock;
 
 std::string kernel_source = "\n"\
 "// very simple kernel\n"\
@@ -23,7 +30,7 @@ const unsigned int platform_id = 0;
 const unsigned int device_id = 0;
 
 int main(int ac, char** av) {
-	size_t vector_size = 1024 * 256;
+	size_t vector_size = 1024 * 1024;
 	if (ac > 1)
 		vector_size = atoi(av[1]);
 	try {
@@ -32,7 +39,7 @@ int main(int ac, char** av) {
 		cl::Platform::get(&platforms);
 		std::vector<cl::Device> devices_;
 		platforms[platform_id].getDevices(CL_DEVICE_TYPE_ALL, &devices_);
-		std::cout << "using device : ";
+		std::cout << "using device   : ";
 		std::cout << devices_[device_id].getInfo<CL_DEVICE_NAME>();
 		std::cout << std::endl;
 		cl_context_properties properties[] = {
@@ -41,7 +48,7 @@ int main(int ac, char** av) {
 			0
 		};
 		cl::Context context_ = cl::Context(CL_DEVICE_TYPE_ALL, properties);
-		devices_ = context_.getInfo<CL_CONTEXT_DEVICES>();
+//		devices_ = context_.getInfo<CL_CONTEXT_DEVICES>();
 		cl::CommandQueue queue_(context_, devices_[device_id], 0 , nullptr);
 		// compile
 		cl::Program::Sources source(
@@ -55,10 +62,10 @@ int main(int ac, char** av) {
 		std::vector<float> in1(vector_size);
 		std::vector<float> in2(vector_size);
 		std::vector<float> out(vector_size);
-		for (std::vector<float>::iterator ite = in1.begin(); ite != in1.end(); ++ite)
-			(*ite) = (float)random();
-		for (std::vector<float>::iterator ite = in2.begin(); ite != in2.end(); ++ite)
-			(*ite) = (float)random();
+		for (auto& ite : in1)
+			ite = (float)random();
+		for (auto& ite : in2)
+			ite = (float)random();
 		cl::Buffer buf_in1_ = cl::Buffer(
 			context_,
 			CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
@@ -79,6 +86,7 @@ int main(int ac, char** av) {
 		kernel_.setArg(2, buf_out_);
 		// wait to the command queue to finish before proceeding
 		queue_.finish();
+		auto start = system_clock::now();
 		// run the kernel
 		queue_.enqueueNDRangeKernel(
 			kernel_,
@@ -93,8 +101,11 @@ int main(int ac, char** av) {
 			0,
 			vector_size * sizeof(float),
 			&out[0]);
+		auto end = system_clock::now();
 		queue_.finish();
-		std::cout << "Operation successfull" << std::endl;
+		std::cout << "Computing time : ";
+		std::cout << duration_cast<microseconds>(end - start).count();
+		std::cout << "us" << std::endl;
 	} catch (cl::Error& er) {
 		std::cerr << "Exception(CL)  : " << er.what();
 		std::cerr << "(" << er.err() << ")" << std::endl;
