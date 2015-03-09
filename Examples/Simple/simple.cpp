@@ -94,6 +94,7 @@ int main(int ac, char** av) {
 			cl::NDRange(vector_size),
 			cl::NullRange);
 		queue_.finish();
+		auto end = system_clock::now();
 		// get the result out
 		queue_.enqueueReadBuffer(
 			buf_out_,
@@ -101,7 +102,6 @@ int main(int ac, char** av) {
 			0,
 			vector_size * sizeof(float),
 			&out[0]);
-		auto end = system_clock::now();
 		queue_.finish();
 		std::cout << "Computing time : ";
 		std::cout << duration_cast<microseconds>(end - start).count();
