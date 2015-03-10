@@ -1,5 +1,32 @@
 #define NB_COLOR 256
 
+// access format for the image
+constant sampler_t format =
+	CLK_NORMALIZED_COORDS_FALSE | 
+	CLK_FILTER_NEAREST | 
+	CLK_ADDRESS_CLAMP;
+
+// luminosity from color (float4 -> float)
+static float luminosity_from_color(const float4 col)
+{
+	return 0.21f * col.x + 0.72f * col.y + 0.07f * col.z;
+}
+
+// compute luminosity from RGBA color image
+// size (image_x, image_y)
+//	img					: image (in)
+//	luminosity			: linear luminosity map (out)
+kernel void histogram_luminosity(
+	read_only image2d_t img,
+	global uchar* luminosity)
+{
+	int2 d = (int2)(get_global_id(0), get_global_id(1));
+	int l = get_global_id(0) + get_global_id(1) * get_global_size(0);
+	float4 col = read_imagef(img, format, d);
+	float lum = luminosity_from_color(col);
+	luminosity[l] = convert_uchar_sat(min(lum, 1.0f) * 255.0f);
+}
+
 // init the partial memory to 0
 // size (work_group_size * num_groups)
 // 	partial_histogram 	: the buffer with the partial histogram (out)

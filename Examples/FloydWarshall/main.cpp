@@ -106,8 +106,8 @@ int main(int ac, char** av) {
 			<< "Setup           : (" << ef.size() << ", "
 			<< ef.size() << ")" << std::endl;
 			cfw.setup(std::make_pair<unsigned int, unsigned int>(
-																 ef.size(),
-																 ef.size()));
+				ef.size(),
+				ef.size()));
 			time_duration best_time = minutes(60);
 			for (int i = 0; i < nb_loops; ++i) {
 				time_duration actual_time;

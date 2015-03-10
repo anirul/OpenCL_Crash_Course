@@ -105,17 +105,26 @@ void cl_histogram::setup(const std::pair<unsigned int, unsigned int>& s) {
 }
 
 void cl_histogram::prepare(const std::vector<uint8_t>& input) {
-	if (input.size() != total_size_)
+	if (input.size() / 4 != total_size_)
 		throw std::runtime_error("input buffer size != image size!");
-	kernel_histogram_init_ = cl::Kernel(program_, "histogram_init", &err_);
-	kernel_histogram_partial_ = cl::Kernel(program_, "histogram_partial", &err_);
-	kernel_histogram_reduce_ = cl::Kernel(program_, "histogram_reduce", &err_);
-	cl_buffer_image_ = cl::Buffer(
+	kernel_luminosity_ = cl::Kernel(program_, "histogram_luminosity", & err_);
+	kernel_init_ = cl::Kernel(program_, "histogram_init", &err_);
+	kernel_partial_ = cl::Kernel(program_, "histogram_partial", &err_);
+	kernel_reduce_ = cl::Kernel(program_, "histogram_reduce", &err_);
+	cl::ImageFormat format = cl::ImageFormat(CL_BGRA, CL_UNORM_INT8);
+	cl_buffer_image_ = cl::Image2D(
 		context_,
-		CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
-		sizeof(uint8_t) * total_size_,
+		CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+		format,
+		mdx_,
+		mdy_,
+		0,
 		(void*)&input[0],
 		&err_);
+	cl_buffer_luminosity_ = cl::Buffer(
+		context_,
+		CL_MEM_READ_WRITE,
+		sizeof(uint8_t) * total_size_);
 	cl_buffer_histogram_partial_ = cl::Buffer(
 		context_,
 		CL_MEM_READ_WRITE,
@@ -129,33 +138,48 @@ void cl_histogram::prepare(const std::vector<uint8_t>& input) {
 boost::posix_time::time_duration cl_histogram::run(
 	std::vector<unsigned int>& output)
 {
+	// luminosity
+	kernel_luminosity_.setArg(0, cl_buffer_image_);
+	kernel_luminosity_.setArg(1, cl_buffer_luminosity_);
+	queue_.finish();
+	err_ = queue_.enqueueNDRangeKernel(
+		kernel_luminosity_,
+		cl::NullRange,
+		cl::NDRange(mdx_, mdy_),
+		cl::NullRange,
+		nullptr,
+		&event_);
+	queue_.finish();
 	auto start = boost::posix_time::microsec_clock::universal_time();
-	kernel_histogram_init_.setArg(0, cl_buffer_histogram_partial_);
+	// cleanup
+	kernel_init_.setArg(0, cl_buffer_histogram_partial_);
 	queue_.finish();
 	err_ = queue_.enqueueNDRangeKernel(
-		kernel_histogram_init_,
+		kernel_init_,
 		cl::NullRange,
 		cl::NDRange(cl_work_group_size_, cl_num_groups_),
 		cl::NullRange,
 		nullptr,
 		&event_);
-	kernel_histogram_partial_.setArg(0, cl_buffer_image_);
-	kernel_histogram_partial_.setArg(1, cl_buffer_histogram_partial_);
+	// partial histogram
+	kernel_partial_.setArg(0, cl_buffer_luminosity_);
+	kernel_partial_.setArg(1, cl_buffer_histogram_partial_);
 	queue_.finish();
 	err_ = queue_.enqueueNDRangeKernel(
-		kernel_histogram_partial_,
+		kernel_partial_,
 		cl::NullRange,
 		cl::NDRange(cl_work_group_size_, cl_num_groups_),
 		cl::NullRange,
 		nullptr,
 		&event_);
 	queue_.finish();
-	kernel_histogram_reduce_.setArg(0, cl_buffer_histogram_partial_);
-	kernel_histogram_reduce_.setArg(1, cl_num_groups_);
-	kernel_histogram_reduce_.setArg(2, cl_buffer_histogram_);
+	// collect
+	kernel_reduce_.setArg(0, cl_buffer_histogram_partial_);
+	kernel_reduce_.setArg(1, cl_num_groups_);
+	kernel_reduce_.setArg(2, cl_buffer_histogram_);
 	queue_.finish();
 	err_ = queue_.enqueueNDRangeKernel(
-		kernel_histogram_reduce_,
+		kernel_reduce_,
 		cl::NullRange,
 		cl::NDRange(256),
 		cl::NullRange,

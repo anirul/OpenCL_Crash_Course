@@ -34,14 +34,16 @@
 
 class cl_histogram {
 private:
-	cl::Buffer cl_buffer_image_;
+	cl::Image2D cl_buffer_image_;
+	cl::Buffer cl_buffer_luminosity_;
 	cl::Buffer cl_buffer_histogram_partial_;
 	cl::Buffer cl_buffer_histogram_;
 	cl::CommandQueue queue_;
 	cl::Program program_;
-	cl::Kernel kernel_histogram_init_;
-	cl::Kernel kernel_histogram_partial_;
-	cl::Kernel kernel_histogram_reduce_;
+	cl::Kernel kernel_luminosity_;
+	cl::Kernel kernel_init_;
+	cl::Kernel kernel_partial_;
+	cl::Kernel kernel_reduce_;
 	std::vector<cl::Device> devices_;
 	cl::Context context_;
 	unsigned int device_used_;
