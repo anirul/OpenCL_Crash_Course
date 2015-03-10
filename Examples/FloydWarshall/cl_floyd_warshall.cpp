@@ -110,13 +110,13 @@ void cl_floyd_warshall::prepare(const std::vector<float>& in) {
 		&err_);
 	cl_buffer_in_x_ = cl::Buffer(
         context_,
-        CL_MEM_READ_ONLY,
+        CL_MEM_READ_WRITE,
         sizeof(float) * mdx_,
         NULL,
         &err_);
 	cl_buffer_in_y_ = cl::Buffer(
         context_,
-        CL_MEM_READ_ONLY,
+        CL_MEM_READ_WRITE,
         sizeof(float) * mdy_,
         NULL,
         &err_);
@@ -132,6 +132,7 @@ void cl_floyd_warshall::prepare(const std::vector<float>& in) {
 time_duration cl_floyd_warshall::run(std::vector<float>& mat) {
 	ptime before;
 	ptime after;
+	assert(mdx_ == mdy_);
 	time_duration total = seconds(0);
 	if (mat.size() != total_size_)
 		mat.resize(total_size_);
@@ -163,7 +164,7 @@ time_duration cl_floyd_warshall::run(std::vector<float>& mat) {
 				0,
 				sizeof(float),
 				0,
-				NULL,
+				nullptr,
 				&event_);
 		}
 		{ // cl_buffer_y_
@@ -181,11 +182,11 @@ time_duration cl_floyd_warshall::run(std::vector<float>& mat) {
 				src_origin,
 				dst_origin,
 				region,
-				mdy_,
+				mdx_ * sizeof(float),
 				0,
 				sizeof(float),
 				0,
-				NULL,
+				nullptr,
 				&event_);
 		}
 		queue_.finish();

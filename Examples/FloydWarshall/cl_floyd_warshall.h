@@ -29,11 +29,10 @@
 #define CL_floyd_warshall_HEADER_DEFINED
 
 class cl_floyd_warshall {
-private :
+private:
 	cl::Buffer cl_buffer_mat_;
 	cl::Buffer cl_buffer_in_x_;
-   cl::Buffer cl_buffer_in_y_;
-	size_t buffer_size_;
+	cl::Buffer cl_buffer_in_y_;
 	size_t total_size_;
 	cl_uint mdx_;
 	cl_uint mdy_;
@@ -43,10 +42,10 @@ private :
 	cl::CommandQueue queue_;
 	cl::Program program_;
 	cl::Kernel kernel_;
-	// debugging variables	
+	// debugging variables
 	cl_int err_;
 	cl::Event event_;
-public :
+public:
 	cl_floyd_warshall(bool gpu);
 	void init(const std::string& cl_file);
 	// if change size
