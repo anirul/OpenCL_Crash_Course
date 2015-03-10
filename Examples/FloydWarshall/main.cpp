@@ -45,7 +45,7 @@ int main(int ac, char** av) {
 	bool enable_gpu = true;
 	unsigned int nb_loops = 1;
 	std::string cl_file = "floyd_warshall.cl";
-	std::string graph_in = "tinyEWD.txt";
+	std::string graph_in = "rome99.txt";
 	std::string graph_out = "";
 	try {
 		// parse command line
