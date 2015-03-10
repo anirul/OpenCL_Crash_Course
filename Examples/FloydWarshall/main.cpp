@@ -43,7 +43,6 @@ using namespace boost::posix_time;
 
 int main(int ac, char** av) {
 	bool enable_gpu = true;
-	bool enable_image = false;
 	unsigned int nb_loops = 1;
 	std::string cl_file = "floyd_warshall.cl";
 	std::string graph_in = "tinyEWD.txt";
@@ -71,12 +70,12 @@ int main(int ac, char** av) {
 		}
 		if (vm.count("opencl-cpu")) {
 			enable_gpu = false;
-			std::cout << "OpenCL (CPU)    : enable" << std::endl;
 		}
 		if (vm.count("opencl-gpu")) {
 			enable_gpu = true;
-			std::cout << "OpenCL (GPU)    : enable" << std::endl;
 		}
+		std::cout << "OpenCL (" << ((enable_gpu) ? "GPU" : "CPU");
+		std::cout << ")    : enable" << std::endl;
 		if (vm.count("file-in")) {
 			graph_in = vm["file-in"].as<std::string>();
 		}

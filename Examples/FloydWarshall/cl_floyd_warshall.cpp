@@ -168,24 +168,12 @@ time_duration cl_floyd_warshall::run(std::vector<float>& mat) {
 				&event_);
 		}
 		{ // cl_buffer_y_
-			cl::size_t<3> src_origin;
-			cl::size_t<3> region;
-			src_origin[0] = 0;
-			src_origin[1] = i * sizeof(float);
-			src_origin[2] = 0;
-			region[0] = mdy_ * sizeof(float);
-			region[1] = 1;
-			region[2] = 1;
-			queue_.enqueueCopyBufferRect(
+			queue_.enqueueCopyBuffer(
 				cl_buffer_mat_,
 				cl_buffer_in_y_,
-				src_origin,
-				dst_origin,
-				region,
+				mdx_ * i * sizeof(float),
+				0,
 				mdx_ * sizeof(float),
-				0,
-				sizeof(float),
-				0,
 				nullptr,
 				&event_);
 		}
