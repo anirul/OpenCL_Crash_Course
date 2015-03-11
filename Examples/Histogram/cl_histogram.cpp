@@ -114,7 +114,7 @@ void cl_histogram::prepare(const std::vector<uint8_t>& input) {
 	cl::ImageFormat format = cl::ImageFormat(CL_BGRA, CL_UNORM_INT8);
 	cl_buffer_image_ = cl::Image2D(
 		context_,
-		CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+		CL_MEM_READ_ONLY | CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR,
 		format,
 		mdx_,
 		mdy_,
