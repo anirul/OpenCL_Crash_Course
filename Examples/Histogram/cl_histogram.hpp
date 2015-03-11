@@ -29,9 +29,8 @@
 
 #include <string>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 #define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 class cl_histogram {
 private:
