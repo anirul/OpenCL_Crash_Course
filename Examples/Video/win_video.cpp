@@ -39,7 +39,7 @@
 #include <OpenGL/glu.h>
 #endif
 #define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "cl_video.hpp"

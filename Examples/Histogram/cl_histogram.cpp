@@ -107,10 +107,10 @@ void cl_histogram::setup(const std::pair<unsigned int, unsigned int>& s) {
 void cl_histogram::prepare(const std::vector<uint8_t>& input) {
 	if (input.size() / 4 != total_size_)
 		throw std::runtime_error("input buffer size != image size!");
-	kernel_luminosity_ = cl::Kernel(program_, "histogram_luminosity", & err_);
-	kernel_init_ = cl::Kernel(program_, "histogram_init", &err_);
-	kernel_partial_ = cl::Kernel(program_, "histogram_partial", &err_);
-	kernel_reduce_ = cl::Kernel(program_, "histogram_reduce", &err_);
+	kernel_luminosity_ = cl::Kernel(program_, "histogram_luminosity");
+	kernel_init_ = cl::Kernel(program_, "histogram_init");
+	kernel_partial_ = cl::Kernel(program_, "histogram_partial");
+	kernel_reduce_ = cl::Kernel(program_, "histogram_reduce");
 	cl::ImageFormat format = cl::ImageFormat(CL_BGRA, CL_UNORM_INT8);
 	cl_buffer_image_ = cl::Image2D(
 		context_,

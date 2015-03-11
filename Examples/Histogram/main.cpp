@@ -101,9 +101,6 @@ int main(int ac, char** av) {
 			hist.prepare(vec_img);
 			std::vector<unsigned int> out(256, 0);
 			auto time = hist.run(out);
-			for (auto i : out) {
-				std::cout << i << std::endl;
-			}
 			std::cout << "computed in     : " << time << std::endl;
 		}
 	} catch (cl::Error& er) {

@@ -29,7 +29,8 @@
 
 #include <string>
 
-#include <CL/cl.hpp>
+#define __CL_ENABLE_EXCEPTIONS
+#include <cl.hpp>
 
 class cl_video {
 private:

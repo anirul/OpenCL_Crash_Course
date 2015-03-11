@@ -28,7 +28,7 @@
 #include <iostream>
 #include <vector>
 #define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>

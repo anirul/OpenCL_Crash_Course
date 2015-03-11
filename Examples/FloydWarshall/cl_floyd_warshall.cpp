@@ -29,7 +29,7 @@
 #include <iostream>
 #include <vector>
 #define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #ifdef __linux__
 #include <GL/glx.h>
 #endif

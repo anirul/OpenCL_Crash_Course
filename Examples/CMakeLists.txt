@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(OpenCL_Crash_Course)
 
 include("cmake/FindCXXFeatures.cmake")
-set(CMAKE_CXX_FLAGS " -g -O0 ${CMAKE_CXX_FLAGS} ${CXX11_COMPILER_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_COMPILER_FLAGS}")
 
 if (APPLE)
     set(CMAKE_C_COMPILER clang)
@@ -15,7 +15,7 @@ if (APPLE)
 
     include_directories(
         /opt/local/include
-        ${PROJECT_SOURCE_DIR}/Thirdparty/CL12/
+        ${PROJECT_SOURCE_DIR}/Thirdparty/CL12
     )
 
     find_library(COCOA_LIBRARY Cocoa)

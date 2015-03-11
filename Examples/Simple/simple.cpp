@@ -29,7 +29,7 @@
 #include <fstream>
 #include <vector>
 #define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <chrono>
 
 using std::chrono::duration_cast;

@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <iostream>
 #define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 #include "cl_util.h"
 
