@@ -15,7 +15,7 @@ if (APPLE)
 
     include_directories(
         /opt/local/include
-        ${PROJECT_SOURCE_DIR}/Thirdparty
+        ${PROJECT_SOURCE_DIR}/Thirdparty/CL12/
     )
 
     find_library(COCOA_LIBRARY Cocoa)

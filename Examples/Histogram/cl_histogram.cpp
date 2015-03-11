@@ -27,7 +27,7 @@
 
 #include <fstream>
 #define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 #include "cl_histogram.hpp"
 
