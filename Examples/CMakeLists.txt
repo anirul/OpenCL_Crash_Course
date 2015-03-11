@@ -27,6 +27,11 @@ endif(APPLE)
 
 # read linux
 if (UNIX AND NOT APPLE)
+
+	include_directories(
+		${PROJECT_SOURCE_DIR}/Thirdparty/CL11
+	)
+
 	find_library(OPENCL_LIBRARY OpenCL)
 	find_library(OPENGL_LIBRARY GL)
 	find_library(GLU_LIBRARY GLU)
