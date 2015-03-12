@@ -31,7 +31,7 @@
 #include <mutex>
 
 class i_win {
-public :
+public:
 	virtual void init() = 0;
 	virtual void display() = 0;
 	virtual void idle() = 0;
@@ -49,23 +49,22 @@ class glut_win {
 	glut_win(
 		const std::string& name,
 		const std::pair<unsigned int, unsigned int>& range,
-		i_win* windesc, 
+		i_win* windesc,
 		bool fullscreen = false)
 			throw(std::exception);
-public :
+public:
 	i_win* pwin_;
 	static glut_win* instance(
 		const std::string& name,
 		const std::pair<unsigned int, unsigned int>& range,
-		i_win* windesc, 
+		i_win* windesc,
 		bool fullscreen = false)
 			throw(std::exception);
 	static glut_win* instance()
-			throw(std::exception);	 
+			throw(std::exception);
 	virtual ~glut_win();
 	void run()
 			throw(std::exception);
 };
 
 #endif // GLUT_WIN_HEADER_DEFINED
-
