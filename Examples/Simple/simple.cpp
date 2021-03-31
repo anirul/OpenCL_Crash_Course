@@ -31,6 +31,7 @@
 #define __CL_ENABLE_EXCEPTIONS
 #include <cl.hpp>
 #include <chrono>
+#include <random>
 
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
@@ -62,70 +63,73 @@ int main(int ac, char** av) {
 		cl::Platform::get(&platforms);
 		std::vector<cl::Device> devices_;
 		platforms[platform_id].getDevices(CL_DEVICE_TYPE_ALL, &devices_);
-		std::cout << "using device   : ";
-		std::cout << devices_[device_id].getInfo<CL_DEVICE_NAME>();
-		std::cout << std::endl;
-		cl_context_properties properties[] = {
-			CL_CONTEXT_PLATFORM,
-			(cl_context_properties)(platforms[platform_id])(),
-			0
-		};
-		cl::Context context_ = cl::Context(CL_DEVICE_TYPE_ALL, properties);
-		cl::CommandQueue queue_(context_, devices_[device_id], 0 , nullptr);
-		// compile
-		cl::Program::Sources source(
-			1,
-			std::make_pair(kernel_source.c_str(), kernel_source.size()));
-		cl::Program program_(context_, source);
-		program_.build(devices_);
-		// create the kernel
-		cl::Kernel kernel_(program_, "simple");
-		// prepare the buffers
-		std::vector<float> in1(vector_size);
-		std::vector<float> in2(vector_size);
-		std::vector<float> out(vector_size);
-		for (auto& ite : in1) ite = (float)random();
-		for (auto& ite : in2) ite = (float)random();
-		cl::Buffer buf_in1_ = cl::Buffer(
-			context_,
-			CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-			sizeof(cl_float) * in1.size(),
-			(void*)&in1[0]);
-		cl::Buffer buf_in2_ = cl::Buffer(
-			context_,
-			CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-			sizeof(cl_float) * in2.size(),
-			(void*)&in2[0]);
-		cl::Buffer buf_out_ = cl::Buffer(
-			context_,
-			CL_MEM_WRITE_ONLY,
-			sizeof(cl_float) * out.size());
-		// set the arguments
-		kernel_.setArg(0, buf_in1_);
-		kernel_.setArg(1, buf_in2_);
-		kernel_.setArg(2, buf_out_);
-		// wait to the command queue to finish before proceeding
-		queue_.finish();
-		auto start = system_clock::now();
-		// run the kernel
-		queue_.enqueueNDRangeKernel(
-			kernel_,
-			cl::NullRange,
-			cl::NDRange(vector_size),
-			cl::NullRange);
-		queue_.finish();
-		auto end = system_clock::now();
-		// get the result out
-		queue_.enqueueReadBuffer(
-			buf_out_,
-			CL_TRUE,
-			0,
-			vector_size * sizeof(float),
-			&out[0]);
-		queue_.finish();
-		std::cout << "Computing time : ";
-		std::cout << duration_cast<microseconds>(end - start).count();
-		std::cout << "us" << std::endl;
+		for (auto& device : devices_)
+		{
+			std::cout << "using device   : ";
+			std::cout << devices_[device_id].getInfo<CL_DEVICE_NAME>();
+			std::cout << std::endl;
+			cl_context_properties properties[] = {
+				CL_CONTEXT_PLATFORM,
+				(cl_context_properties)(platforms[platform_id])(),
+				0
+			};
+			cl::Context context_ = cl::Context(CL_DEVICE_TYPE_ALL, properties);
+			cl::CommandQueue queue_(context_, devices_[device_id], 0 , nullptr);
+			// compile
+			cl::Program::Sources source(
+				1,
+				std::make_pair(kernel_source.c_str(), kernel_source.size()));
+			cl::Program program_(context_, source);
+			program_.build(devices_);
+			// create the kernel
+			cl::Kernel kernel_(program_, "simple");
+			// prepare the buffers
+			std::vector<float> in1(vector_size);
+			std::vector<float> in2(vector_size);
+			std::vector<float> out(vector_size);
+			for (auto& ite : in1) ite = (float)rand();
+			for (auto& ite : in2) ite = (float)rand();
+			cl::Buffer buf_in1_ = cl::Buffer(
+				context_,
+				CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+				sizeof(cl_float) * in1.size(),
+				(void*)&in1[0]);
+			cl::Buffer buf_in2_ = cl::Buffer(
+				context_,
+				CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+				sizeof(cl_float) * in2.size(),
+				(void*)&in2[0]);
+			cl::Buffer buf_out_ = cl::Buffer(
+				context_,
+				CL_MEM_WRITE_ONLY,
+				sizeof(cl_float) * out.size());
+			// set the arguments
+			kernel_.setArg(0, buf_in1_);
+			kernel_.setArg(1, buf_in2_);
+			kernel_.setArg(2, buf_out_);
+			// wait to the command queue to finish before proceeding
+			queue_.finish();
+			auto start = system_clock::now();
+			// run the kernel
+			queue_.enqueueNDRangeKernel(
+				kernel_,
+				cl::NullRange,
+				cl::NDRange(vector_size),
+				cl::NullRange);
+			queue_.finish();
+			auto end = system_clock::now();
+			// get the result out
+			queue_.enqueueReadBuffer(
+				buf_out_,
+				CL_TRUE,
+				0,
+				vector_size * sizeof(float),
+				&out[0]);
+			queue_.finish();
+			std::cout << "Computing time : ";
+			std::cout << duration_cast<microseconds>(end - start).count();
+			std::cout << "us" << std::endl;
+		}
 	} catch (cl::Error& er) {
 		std::cerr << "Exception(CL)  : " << er.what();
 		std::cerr << "(" << er.err() << ")" << std::endl;
