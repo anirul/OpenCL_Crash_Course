@@ -66,7 +66,7 @@ int main(int ac, char** av) {
 		for (auto& device : devices_)
 		{
 			std::cout << "using device   : ";
-			std::cout << devices_[device_id].getInfo<CL_DEVICE_NAME>();
+			std::cout << device.getInfo<CL_DEVICE_NAME>();
 			std::cout << std::endl;
 			cl_context_properties properties[] = {
 				CL_CONTEXT_PLATFORM,
@@ -74,7 +74,7 @@ int main(int ac, char** av) {
 				0
 			};
 			cl::Context context_ = cl::Context(CL_DEVICE_TYPE_ALL, properties);
-			cl::CommandQueue queue_(context_, devices_[device_id], 0 , nullptr);
+			cl::CommandQueue queue_(context_, device, 0 , nullptr);
 			// compile
 			cl::Program::Sources source(
 				1,
