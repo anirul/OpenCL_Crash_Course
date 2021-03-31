@@ -11,9 +11,9 @@ endif(WIN32)
 
 set(Boost_USE_STATIC_LIBS ON)
 
-#find_package(Boost REQUIRED COMPONENTS system program_options)
-#find_package(opencv REQUIRED)
-#find_package(GLUT REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system program_options)
+find_package(opencv REQUIRED)
+find_package(GLUT REQUIRED)
 find_package(OpenCL REQUIRED)
 
 add_executable(Simple
