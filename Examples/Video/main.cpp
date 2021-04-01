@@ -99,9 +99,9 @@ int main(int ac, char** av) {
 		if (video.grab()) {
 			video.retrieve(frame);
 			if (!color)
-				cv::cvtColor(frame, temp, CV_BGR2GRAY);
+				cv::cvtColor(frame, temp, cv::COLOR_BGR2GRAY);
 			else
-				cv::cvtColor(frame, temp, CV_BGR2BGRA);
+				cv::cvtColor(frame, temp, cv::COLOR_BGR2BGRA);
 			cv::Size frame_size = frame.size();
 			size.first = frame_size.width;
 			size.second = frame_size.height;
@@ -116,9 +116,9 @@ int main(int ac, char** av) {
 				 video.retrieve(frame);
 				 cv::flip(frame, temp, 0);
 				 if (!color)
-					 cv::cvtColor(temp, frame, CV_BGR2GRAY);
+					 cv::cvtColor(temp, frame, cv::COLOR_BGR2GRAY);
 				 else
-					 cv::cvtColor(temp, frame, CV_BGR2BGRA);
+					 cv::cvtColor(temp, frame, cv::COLOR_BGR2BGRA);
 				 vec.resize(size.first * size.second * frame.elemSize());
 				 memcpy(&vec[0],
 						frame.ptr(),
