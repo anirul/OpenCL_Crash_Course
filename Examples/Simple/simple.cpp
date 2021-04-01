@@ -60,12 +60,16 @@ int main(int ac, char** av) {
 		// get the device (here the GPU)
 		std::vector<cl::Platform> platforms;
 		cl::Platform::get(&platforms);
-		std::cout << "platform size: " << platforms.size() << std::endl;
+		std::cout << "platform size  : " << platforms.size() << std::endl;
 		for (auto& platform : platforms)
 		{
+			std::cout 
+				<< "using platform : " 
+				<< platform.getInfo<CL_PLATFORM_NAME>()
+				<< std::endl;
 			std::vector<cl::Device> devices_;
 			platform.getDevices(CL_DEVICE_TYPE_ALL, &devices_);
-			std::cout << "device size: " << devices_.size() << std::endl;
+			std::cout << "device size    : " << devices_.size() << std::endl;
 			for (auto& device : devices_)
 			{
 				std::cout << "using device   : ";
