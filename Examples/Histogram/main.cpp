@@ -84,9 +84,9 @@ int main(int ac, char** av) {
 		}
 		std::vector<uint8_t> vec_img;
 		{ // OpenCV mess
-			cv::Mat frame = cv::imread(input_image, CV_LOAD_IMAGE_COLOR);
+			cv::Mat frame = cv::imread(input_image, cv::IMREAD_COLOR);
 			cv::Mat img;
-			cv::cvtColor(frame, img, CV_BGR2BGRA);
+			cv::cvtColor(frame, img, cv::COLOR_BGR2BGRA);
 			cv::Size size = img.size();
 			setup_size = std::make_pair(size.width, size.height);
 			std::cout << "image element   : " << img.elemSize() << std::endl;

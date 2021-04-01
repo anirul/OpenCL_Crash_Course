@@ -9,7 +9,9 @@ if(WIN32)
     add_compile_options("/D _WIN32_WINNT=0x0A00")
 endif(WIN32)
 
-add_executable(Simple
-	simple.cpp
-	simple.cl
+add_executable(Histogram
+	cl_histogram.cpp
+	cl_histogram.hpp
+	main.cpp
+	histogram.cl
 )
