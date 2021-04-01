@@ -72,9 +72,10 @@ int main(int ac, char** av) {
 			std::cout << "device size    : " << devices_.size() << std::endl;
 			for (auto& device : devices_)
 			{
-				std::cout << "using device   : ";
-				std::cout << device.getInfo<CL_DEVICE_NAME>();
-				std::cout << std::endl;
+				std::cout 
+					<< "using device   : "
+					<< device.getInfo<CL_DEVICE_NAME>()
+					<< std::endl;
 				cl_context_properties properties[] = {
 					CL_CONTEXT_PLATFORM,
 					(cl_context_properties)(platform)(),
