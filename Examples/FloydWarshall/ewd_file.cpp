@@ -29,7 +29,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <utility>
-#include <math.h>
+#include <cmath>
 #include "ewd_file.h"
 
 ewd_file::ewd_file() : nb_vector_(0), nb_edges_(0) {
@@ -42,7 +42,7 @@ ewd_file::~ewd_file() {
    edges_.clear();
 }
 
-void ewd_file::import_file(const std::string& name) throw(std::exception)
+void ewd_file::import_file(const std::string& name)
 {
    std::ifstream ifs;
    ifs.open(name.c_str());
@@ -84,7 +84,7 @@ void ewd_file::import_file(const std::string& name) throw(std::exception)
    ifs.close();
 }
 
-void ewd_file::export_file(const std::string& name) throw(std::exception)
+void ewd_file::export_file(const std::string& name)
 {
    std::ofstream ofs;
    ofs.open(name.c_str());
@@ -108,9 +108,9 @@ size_t ewd_file::size() const {
    return nb_vector_;
 }
 
-void ewd_file::import_matrix(float* p, size_t size) throw(std::exception)
+void ewd_file::import_matrix(float* p, size_t size)
 {
-   nb_vector_ = sqrt(size);
+   nb_vector_ = static_cast<size_t>(std::sqrt(size));
    for (int x = 0; x < nb_vector_; ++x) {
       for (int y = 0; y < nb_vector_; ++y) {
          float distance = p[x + (y * nb_vector_)];
@@ -121,7 +121,7 @@ void ewd_file::import_matrix(float* p, size_t size) throw(std::exception)
    }
 }
 
-void ewd_file::export_matrix(float* p, size_t size) throw(std::exception)
+void ewd_file::export_matrix(float* p, size_t size)
 {
    if ((nb_vector_ * nb_vector_) != size)
       throw std::runtime_error("Unmatched size!");
@@ -141,7 +141,7 @@ void ewd_file::print_matrix(std::ostream& os) {
       for (int y = 0; y < nb_vector_; ++y) {
          std::stringstream ss("");
          ss << dist(x, y);
-         int line_left = 8 - ss.str().size();
+         int line_left = 8 - static_cast<int>(ss.str().size());
          os << ss.str();
          for (int i = 0; i < line_left; ++i)
             os << " ";

@@ -1,0 +1,14 @@
+{
+	"name": "opencl-crash-course",
+	"version-string": "1.0",
+	"dependencies": [
+		"boost-system",
+		"boost-program-options",
+		"boost-date-time",
+		"boost-chrono",
+		"boost-filesystem",
+		"opencv",
+		"freeglut",
+		"opencl"
+	]
+}

@@ -1,7 +1,16 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(OpenCL_Crash_Course)
+project(OpenCLCrashCourse)
 
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    include("~/Documents/GitHub/vcpkg/scripts/buildsystems/vcpkg.cmake")
+endif()
+if(UNIX AND NOT DEFINED VCPKG_TARGET_TRIPLET)
+    set(VCPKG_TARGET_TRIPLET x64-linux)
+endif()
+if(WIN32 AND NOT DEFINED VCPKG_TARGET_TRIPLET)
+    set(VCPKG_TARGET_TRIPLET x64-windows)
+endif()
 if(WIN32)
     add_compile_options("/std:c++latest")
     # Needed for gprc.
@@ -17,11 +26,6 @@ find_package(OpenCL REQUIRED)
 add_executable(Simple
 	Simple/simple.cpp
 	Simple/simple.cl
-)
-
-target_include_directories(Simple
-  PUBLIC
-	${CMAKE_SOURCE_DIR}/Thirdparty/CL12
 )
 
 target_link_libraries(Simple
@@ -40,11 +44,6 @@ add_executable(FloydWarshall
 	FloydWarshall/main.cpp
 )
 
-target_include_directories(FloydWarshall
-  PUBLIC
-	${CMAKE_SOURCE_DIR}/Thirdparty/CL12
-)
-
 target_link_libraries(FloydWarshall
   PUBLIC
 	OpenCL::OpenCL
@@ -61,11 +60,6 @@ add_executable(Histogram
 	Histogram/histogram.cl
 )
 
-target_include_directories(Histogram
-  PUBLIC
-	${CMAKE_SOURCE_DIR}/Thirdparty/CL12
-)
-
 target_link_libraries(Histogram
   PUBLIC
   	${OpenCV_LIBS}
@@ -76,64 +70,25 @@ target_link_libraries(Histogram
 	Boost::chrono
 )
 
-#add_executable(Video
-#	Video/cl_video.cpp
-#	Video/cl_video.hpp
-#	Video/glut_win.cpp
-#	Video/glut_win.hpp
-#	Video/main.cpp
-#	Video/painter.cl
-#	Video/video.cl
-#	Video/win_video.cpp
-#	Video/win_video.hpp
-#)
+add_executable(Video
+	Video/cl_video.cpp
+	Video/cl_video.hpp
+	Video/glut_win.cpp
+	Video/glut_win.hpp
+	Video/main.cpp
+	Video/painter.cl
+	Video/video.cl
+	Video/win_video.cpp
+	Video/win_video.hpp
+)
 
-#target_include_directories(Video
-#  PUBLIC
-#	${CMAKE_SOURCE_DIR}/Thirdparty/CL12
-#)
-
-#target_link_libraries(Video
-#  PUBLIC
-#	GLUT::GLUT
-#	${OpenCV_LIBS}
-#	OpenCL::OpenCL
-#	Boost::system
-#	Boost::program_options
-#	Boost::date_time
-#	Boost::chrono
-#)
-
-if(WIN32)
-    # Standard MSVC flags.
-    add_compile_options("/std:c++latest")
-    add_compile_options("/D _WIN32_WINNT=0x0A00")
-    # This is there to link static in case there is a -static in the variable.
-    if(${VCPKG_TARGET_TRIPLET} MATCHES "-static")
-        string(REPLACE 
-            "/MD"
-            "/MT" 
-            CMAKE_CXX_FLAGS 
-            ${CMAKE_CXX_FLAGS})
-        string(REPLACE 
-            "/MD"
-            "/MT" 
-            CMAKE_CXX_FLAGS_DEBUG 
-            ${CMAKE_CXX_FLAGS_DEBUG})
-        string(REPLACE 
-            "/MD"
-            "/MT" 
-            CMAKE_CXX_FLAGS_RELEASE 
-            ${CMAKE_CXX_FLAGS_RELEASE})
-        string(REPLACE 
-            "/MD"
-            "/MT" 
-            CMAKE_CXX_FLAGS_MINSIZEREL 
-            ${CMAKE_CXX_FLAGS_MINSIZEREL})
-        string(REPLACE 
-            "/MD"
-            "/MT" 
-            CMAKE_CXX_FLAGS_RELWITHDEBINFO
-            ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
-    endif(${VCPKG_TARGET_TRIPLET} MATCHES "-static")
-endif(WIN32)
+target_link_libraries(Video
+  PUBLIC
+	GLUT::GLUT
+	${OpenCV_LIBS}
+	OpenCL::OpenCL
+	Boost::system
+	Boost::program_options
+	Boost::date_time
+	Boost::chrono
+)

@@ -25,11 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
-#define __CL_ENABLE_EXCEPTIONS
-#include <cl.hpp>
+#define CL_HPP_ENABLE_EXCEPTIONS
+#define CL_HPP_ENABLE_SIZE_T_COMPATIBILITY
+#include <CL/cl2.hpp>
 #ifdef __linux__
 #include <GL/glx.h>
 #endif
@@ -60,23 +61,9 @@ cl_floyd_warshall::cl_floyd_warshall(bool gpu) {
 }
 
 void cl_floyd_warshall::init(const std::string& cl_file) {
-	FILE* file = fopen(cl_file.c_str(), "rt");
-	if (!file) throw std::runtime_error("could not open file " + cl_file);
-	const unsigned int BUFFER_SIZE = 1024 * 1024;
-	size_t bytes_read = 0;
-	std::string kernel__source = "";
-	do {
-		char temp[BUFFER_SIZE];
-		memset(temp, 0, BUFFER_SIZE);
-		bytes_read = fread(temp, sizeof(char), BUFFER_SIZE, file);
-		kernel__source += temp;
-	} while (bytes_read != 0);
-	fclose(file);
-	cl::Program::Sources source(
-		1,
-		std::make_pair(
-			kernel__source.c_str(),
-			kernel__source.size()));
+	auto ifs = std::ifstream(cl_file.c_str());
+	std::string kernel__source(std::istreambuf_iterator<char>(ifs), {});
+	cl::Program::Sources source(1, kernel__source);
 	program_ = cl::Program(context_, source);
 	try {
 		err_ = program_.build(devices_);
@@ -140,7 +127,7 @@ time_duration cl_floyd_warshall::run(std::vector<float>& mat) {
 	dst_origin[0] = 0;
 	dst_origin[1] = 0;
 	dst_origin[2] = 0;
-	for (int i = 0; i < mdx_; ++i) {
+	for (unsigned int i = 0; i < mdx_; ++i) {
 		std::cout << "Compute generation [" << i + 1 << "/" << mdx_ << "]\r";
 		std::cout.flush();
 		before = microsec_clock::universal_time();

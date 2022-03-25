@@ -38,12 +38,13 @@
 using namespace boost::program_options;
 
 int main(int ac, char** av) {
-	std::string input_video = "";
+	std::string input_video{};
 	std::string input_cl = "./video.cl";
 	bool gpu = true;
 	bool color = true;
 	unsigned int device = 0;
-	try {
+	try 
+	{
 		options_description desc("Allowed options");
 		desc.add_options
 		()
@@ -108,30 +109,31 @@ int main(int ac, char** av) {
 			initial_frame.resize(size.first * size.second * ((color) ? 4 : 1));
 			memcpy(&initial_frame[0], temp.ptr(), size.first * size.second);
 		}
-		win_video* pwv = new win_video
-		(size,
-		 initial_frame,
-		 [&](std::vector<char>& vec) {
-			 if (video.grab()) {
-				 video.retrieve(frame);
-				 cv::flip(frame, temp, 0);
-				 if (!color)
-					 cv::cvtColor(temp, frame, cv::COLOR_BGR2GRAY);
-				 else
-					 cv::cvtColor(temp, frame, cv::COLOR_BGR2BGRA);
-				 vec.resize(size.first * size.second * frame.elemSize());
-				 memcpy(&vec[0],
+		win_video* pwv = new win_video(
+			size,
+			initial_frame,
+			[&](std::vector<char>& vec) {
+				if (video.grab()) {
+					video.retrieve(frame);
+					cv::flip(frame, temp, 0);
+					if (!color)
+						cv::cvtColor(temp, frame, cv::COLOR_BGR2GRAY);
+					else
+						cv::cvtColor(temp, frame, cv::COLOR_BGR2BGRA);
+					vec.resize(size.first * size.second * frame.elemSize());
+					memcpy(
+						&vec[0],
 						frame.ptr(),
 						size.first * size.second * frame.elemSize());
-				 return (cv::waitKey(1) != 27);
-			 } else {
-				 return false;
-			 }
-		 },
-		 input_cl,
-		 color,
-		 gpu,
-		 device);
+					return (cv::waitKey(1) != 27);
+				} else {
+					return false;
+				}
+			},
+			input_cl,
+			color,
+			gpu,
+			device);
 		glut_win* pgw = glut_win::instance("OpenCL Video", size, pwv);
 		pgw->run();
 		video.release();

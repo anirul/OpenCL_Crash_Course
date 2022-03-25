@@ -38,29 +38,41 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #endif
-#define __CL_ENABLE_EXCEPTIONS
-#include <cl.hpp>
+#ifdef WIN32
+#define NOMINMAX
+#include <windows.h>
+#include <GL/GL.h>
+#include <GL/glut.h>
+#endif
+#define CL_HPP_ENABLE_EXCEPTIONS
+#define CL_HPP_ENABLE_SIZE_T_COMPATIBILITY
+#include <CL/cl2.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "cl_video.hpp"
 #include "glut_win.hpp"
 #include "win_video.hpp"
 
-win_video::win_video(const std::pair<unsigned int, unsigned int>& size,
-					 const std::vector<char> initial_image,
-					 std::function<bool (std::vector<char>&)> callback,
-					 const std::string& cl_file,
-					 bool color,
-					 bool gpu,
-					 unsigned int device) :
-range_(size),
-video_(nullptr),
-color_(color),
-gpu_(gpu),
-device_(device),
-texture_id_(0),
-cl_file_(cl_file),
-callback_(callback)
+#ifndef GL_BGRA
+#define GL_BGRA     0x80E1
+#endif
+
+win_video::win_video(
+	const std::pair<unsigned int, unsigned int>& size,
+	const std::vector<char> initial_image,
+	std::function<bool (std::vector<char>&)> callback,
+	const std::string& cl_file,
+	bool color,
+	bool gpu,
+	unsigned int device) :
+		range_(size),
+		video_(nullptr),
+		color_(color),
+		gpu_(gpu),
+		device_(device),
+		texture_id_(0),
+		cl_file_(cl_file),
+		callback_(callback)
 {
 	current_image_ = initial_image;
 	best_time_ = boost::posix_time::minutes(60);
@@ -113,33 +125,35 @@ void win_video::idle() {
 		actual_time = video_->run(current_image_);
 		if (actual_time < best_time_) best_time_ = actual_time;
 		std::cout
-		<< "\rCompute time    : " << actual_time
-		<< " best " << best_time_;
+			<< "\rCompute time    : " << actual_time
+			<< " best " << best_time_;
 		std::cout.flush();
 	}
 	glBindTexture(GL_TEXTURE_2D, texture_id_);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	if (color_) {
-		glTexImage2D(GL_TEXTURE_2D,
-					 0,
-					 GL_RGBA,
-					 range_.first,
-					 range_.second,
-					 0,
-					 GL_BGRA,
-					 GL_UNSIGNED_BYTE,
-					 &current_image_[0]);
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			range_.first,
+			range_.second,
+			0,
+			GL_BGRA,
+			GL_UNSIGNED_BYTE,
+			&current_image_[0]);
 	} else {
-		glTexImage2D(GL_TEXTURE_2D,
-					 0,
-					 GL_LUMINANCE,
-					 range_.first,
-					 range_.second,
-					 0,
-					 GL_LUMINANCE,
-					 GL_UNSIGNED_BYTE,
-					 &current_image_[0]);
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_LUMINANCE,
+			range_.first,
+			range_.second,
+			0,
+			GL_LUMINANCE,
+			GL_UNSIGNED_BYTE,
+			&current_image_[0]);
 	}
 	glFinish();
 }

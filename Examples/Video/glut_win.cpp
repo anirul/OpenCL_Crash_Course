@@ -25,7 +25,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
 #include <stdexcept>
 #include <string>
 #ifdef __linux__
@@ -34,8 +33,9 @@
 #ifdef __APPLE__
 #include <glut/glut.h>
 #endif
-#include <boost/bind.hpp>
-
+#ifdef WIN32
+#include <GL/glut.h>
+#endif
 #include "glut_win.hpp"
 
 static void init() {
@@ -84,31 +84,29 @@ static void mouse_event(int button, int state, int x, int y) {
 	glut_win::instance()->pwin_->mouse_event(button, state, x, y);
 }
 
-glut_win* glut_win::instance_ = NULL;
+glut_win* glut_win::instance_ = nullptr;
 
 glut_win* glut_win::instance(
 	const std::string& name,
 	const std::pair<unsigned int, unsigned int>& range, 
 	i_win* windesc, 
-	bool fullscreen) 
-		throw(std::exception)
+	bool fullscreen)
 {
 	if (!instance_)
 		instance_ = new glut_win(name, range, windesc, fullscreen);
 	return instance_;
 }
 
-glut_win* glut_win::instance() throw(std::exception) {
+glut_win* glut_win::instance() {
 	if (instance_) return instance_;
-	else throw std::runtime_error(std::string("glut_win was not initialized!"));
+	throw std::runtime_error(std::string("glut_win was not initialized!"));
 }
 
 glut_win::glut_win(
 	const std::string& name,
 	const std::pair<unsigned int, unsigned int>& range, 
 	i_win* windesc, 
-	bool fullscreen) 
-		throw(std::exception) :
+	bool fullscreen) :
 		fullscreen_(fullscreen),
 		pwin_(windesc)
 {
@@ -125,8 +123,7 @@ glut_win::glut_win(
 
 glut_win::~glut_win() { }
 
-void glut_win::run() 
-	throw(std::exception)
+void glut_win::run()
 {
 	glutDisplayFunc(display);
 	glutKeyboardFunc(keyboard);

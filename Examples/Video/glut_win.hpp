@@ -50,21 +50,17 @@ class glut_win {
 		const std::string& name,
 		const std::pair<unsigned int, unsigned int>& range,
 		i_win* windesc,
-		bool fullscreen = false)
-			throw(std::exception);
+		bool fullscreen = false);
 public:
 	i_win* pwin_;
 	static glut_win* instance(
 		const std::string& name,
 		const std::pair<unsigned int, unsigned int>& range,
 		i_win* windesc,
-		bool fullscreen = false)
-			throw(std::exception);
-	static glut_win* instance()
-			throw(std::exception);
+		bool fullscreen = false);
+	static glut_win* instance();
 	virtual ~glut_win();
-	void run()
-			throw(std::exception);
+	void run();
 };
 
 #endif // GLUT_WIN_HEADER_DEFINED

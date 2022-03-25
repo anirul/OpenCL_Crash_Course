@@ -26,8 +26,8 @@
  */
 
 #include <fstream>
-#define __CL_ENABLE_EXCEPTIONS
-#include <cl.hpp>
+#define CL_HPP_ENABLE_EXCEPTIONS
+#include <CL/cl2.hpp>
 
 #include "cl_histogram.hpp"
 
@@ -60,7 +60,8 @@ cl_histogram::cl_histogram(
 	devices_ = context_.getInfo<CL_CONTEXT_DEVICES>();
 	queue_ = cl::CommandQueue(context_, devices_[device_used_], 0, &err_);
 	cl_work_group_size_ =
-		devices_[device_used_].getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
+		static_cast<cl_uint>(
+			devices_[device_used_].getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>());
 	std::cout << "work group size : " << cl_work_group_size_ << std::endl;
 }
 
@@ -70,12 +71,8 @@ void cl_histogram::init(const std::string& cl_file) {
 	std::ifstream ifs(cl_file);
 	if (!ifs.is_open())
 		throw std::runtime_error("could not open file : " + cl_file);
-	std::string kernel_source(
-		(std::istreambuf_iterator<char>(ifs)),
-		std::istreambuf_iterator<char>());
-	cl::Program::Sources source(
-		1,
-		std::make_pair(kernel_source.c_str(), kernel_source.size()));
+	std::string kernel_source((std::istreambuf_iterator<char>(ifs)), {});
+	cl::Program::Sources source(1, kernel_source);
 	program_ = cl::Program(context_, source);
 	try {
 		err_ = program_.build(devices_);

@@ -29,8 +29,9 @@
 
 #include <string>
 
-#define __CL_ENABLE_EXCEPTIONS
-#include <cl.hpp>
+#define CL_HPP_ENABLE_EXCEPTIONS
+#define CL_HPP_ENABLE_SIZE_T_COMPATIBILITY
+#include <CL/cl2.hpp>
 
 class cl_video {
 private:

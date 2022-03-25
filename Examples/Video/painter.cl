@@ -1,8 +1,8 @@
 // simple kernel that copy in into out
 
-#define radius 3
+#define radius 4
 #define power_radius (radius * radius)
-#define intensity_level 20
+#define intensity_level 10
 
 __kernel void video_image(
     __read_only image2d_t in,

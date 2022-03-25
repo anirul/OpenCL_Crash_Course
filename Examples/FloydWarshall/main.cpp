@@ -27,8 +27,8 @@
 
 #include <iostream>
 #include <vector>
-#define __CL_ENABLE_EXCEPTIONS
-#include <cl.hpp>
+#define CL_HPP_ENABLE_EXCEPTIONS
+#include <CL/cl2.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
@@ -46,7 +46,7 @@ int main(int ac, char** av) {
 	unsigned int nb_loops = 1;
 	std::string cl_file = "floyd_warshall.cl";
 	std::string graph_in = "rome99.txt";
-	std::string graph_out = "";
+	std::string graph_out{};
 	try {
 		// parse command line
 		options_description desc("Allowed options");
@@ -106,10 +106,10 @@ int main(int ac, char** av) {
 			<< "Setup           : (" << ef.size() << ", "
 			<< ef.size() << ")" << std::endl;
 			cfw.setup(std::make_pair<unsigned int, unsigned int>(
-				ef.size(),
-				ef.size()));
+				static_cast<unsigned int>(ef.size()),
+				static_cast<unsigned int>(ef.size())));
 			time_duration best_time = minutes(60);
-			for (int i = 0; i < nb_loops; ++i) {
+			for (unsigned int i = 0; i < nb_loops; ++i) {
 				time_duration actual_time;
 				std::cout
 				<< "Prepare (buffer): " << initial_state.size() << std::endl;

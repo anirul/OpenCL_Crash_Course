@@ -43,10 +43,10 @@ protected :
 public :
 	ewd_file();
 	virtual ~ewd_file();
-	void import_file(const std::string& name) throw(std::exception);
-	void export_file(const std::string& name) throw(std::exception);
-	void import_matrix(float* p, size_t size) throw(std::exception);
-	void export_matrix(float* p, size_t size) throw(std::exception);
+	void import_file(const std::string& name);
+	void export_file(const std::string& name);
+	void import_matrix(float* p, size_t size);
+	void export_matrix(float* p, size_t size);
 	size_t size() const;
 	float dist(unsigned int v1, unsigned int v2) const;
    void print_matrix(std::ostream& os);

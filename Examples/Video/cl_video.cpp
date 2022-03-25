@@ -25,14 +25,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
-#define __CL_ENABLE_EXCEPTIONS
-#include <cl.hpp>
+#define CL_HPP_ENABLE_EXCEPTIONS
+#define CL_HPP_ENABLE_SIZE_T_COMPATIBILITY
+#include <CL/cl2.hpp>
 #ifdef __linux__
 #include <GL/glx.h>
+#endif
+#ifdef WIN32
+#include <windows.h>
 #endif
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -122,9 +125,7 @@ void cl_video::init(const std::string& cl_file) {
 		throw std::runtime_error("could not open file : " + cl_file);
 	std::string kernel__source((std::istreambuf_iterator<char>(ifs)),
 							   std::istreambuf_iterator<char>());
-	cl::Program::Sources source(1,
-								std::make_pair(kernel__source.c_str(),
-											   kernel__source.size()));
+	cl::Program::Sources source(1, kernel__source);
 	program_ = cl::Program(context_, source);
 	try {
 		err_ = program_.build(devices_);

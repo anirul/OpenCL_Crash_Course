@@ -28,8 +28,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#define __CL_ENABLE_EXCEPTIONS
-#include <cl.hpp>
+#define CL_HPP_ENABLE_EXCEPTIONS
+#include <CL/cl2.hpp>
 #include <chrono>
 #include <random>
 
@@ -87,9 +87,10 @@ int main(int ac, char** av) {
 				// compile
 				cl::Program::Sources source(
 					1,
-					std::make_pair(
-						kernel_source.c_str(), 
-						kernel_source.size()));
+					kernel_source);
+//					std::make_pair(
+//						kernel_source.c_str(), 
+//						kernel_source.size()));
 				cl::Program program_(context_, source);
 				program_.build(devices_);
 				// create the kernel
