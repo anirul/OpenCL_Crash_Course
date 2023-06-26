@@ -27,8 +27,9 @@
 
 #include <stdio.h>
 #include <iostream>
-#define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl2.hpp>
+#define CL_HPP_ENABLE_EXCEPTIONS
+#define CL_HPP_TARGET_OPENCL_VERSION 300
+#include <CL/opencl.hpp>
 
 #include "cl_util.h"
 

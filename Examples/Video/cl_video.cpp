@@ -30,7 +30,8 @@
 #include <vector>
 #define CL_HPP_ENABLE_EXCEPTIONS
 #define CL_HPP_ENABLE_SIZE_T_COMPATIBILITY
-#include <CL/cl2.hpp>
+#define CL_HPP_TARGET_OPENCL_VERSION 300
+#include <CL/opencl.hpp>
 #ifdef __linux__
 #include <GL/glx.h>
 #endif

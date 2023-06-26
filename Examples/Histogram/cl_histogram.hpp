@@ -30,7 +30,8 @@
 #include <string>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #define CL_HPP_ENABLE_EXCEPTIONS
-#include <CL/cl2.hpp>
+#define CL_HPP_TARGET_OPENCL_VERSION 300
+#include <CL/opencl.hpp>
 
 class cl_histogram {
 private:

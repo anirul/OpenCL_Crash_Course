@@ -29,7 +29,8 @@
 #include <fstream>
 #include <vector>
 #define CL_HPP_ENABLE_EXCEPTIONS
-#include <CL/cl2.hpp>
+#define CL_HPP_TARGET_OPENCL_VERSION 300
+#include <CL/opencl.hpp>
 #include <chrono>
 #include <random>
 
