@@ -32,6 +32,15 @@
 
 #include "cl_histogram.hpp"
 
+std::ostream& operator<<(std::ostream& os, const std::vector<unsigned int>& v)
+{
+    for (int i = 0; i < v.size(); ++i) 
+	{
+	    os << "value(" << i << ")\t: "<< v[i] << "\n";
+	}
+    return os;
+}
+
 cl_histogram::cl_histogram(
 	bool gpu,
 	unsigned int platform,
@@ -193,5 +202,6 @@ boost::posix_time::time_duration cl_histogram::run(
 		output.size() * sizeof(cl_uint),
 		&output[0]);
 	queue_.finish();
+	std::cout << output;
 	return (end - start);
 }
