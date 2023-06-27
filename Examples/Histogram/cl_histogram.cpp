@@ -26,6 +26,7 @@
  */
 
 #include <fstream>
+#include <iostream>
 #define CL_HPP_ENABLE_EXCEPTIONS
 #define CL_HPP_TARGET_OPENCL_VERSION 300
 #include <CL/opencl.hpp>
@@ -142,8 +143,7 @@ void cl_histogram::prepare(const std::vector<uint8_t>& input) {
 		sizeof(cl_uint) * 256);
 }
 
-boost::posix_time::time_duration cl_histogram::run(
-	std::vector<unsigned int>& output)
+std::chrono::nanoseconds cl_histogram::run(std::vector<unsigned int>& output)
 {
 	// luminosity
 	kernel_luminosity_.setArg(0, cl_buffer_image_);
@@ -157,7 +157,7 @@ boost::posix_time::time_duration cl_histogram::run(
 		nullptr,
 		&event_);
 	queue_.finish();
-	auto start = boost::posix_time::microsec_clock::universal_time();
+	auto start = std::chrono::high_resolution_clock::now();
 	// cleanup
 	kernel_init_.setArg(0, cl_buffer_histogram_partial_);
 	queue_.finish();
@@ -192,7 +192,7 @@ boost::posix_time::time_duration cl_histogram::run(
 		cl::NullRange,
 		nullptr,
 		&event_);
-	auto end = boost::posix_time::microsec_clock::universal_time();
+	auto end = std::chrono::high_resolution_clock::now();
 	if (output.size() != 256)
 		output.resize(256);
 	queue_.enqueueReadBuffer(
