@@ -71,6 +71,7 @@ target_link_libraries(Histogram
 )
 
 add_executable(Video
+	Video/black_white.cl
 	Video/cl_video.cpp
 	Video/cl_video.hpp
 	Video/glut_win.cpp

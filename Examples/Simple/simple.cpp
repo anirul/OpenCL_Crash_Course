@@ -85,14 +85,31 @@ int main(int ac, char** av) {
 					cl::Context(CL_DEVICE_TYPE_ALL, properties);
 				cl::CommandQueue queue_(context_, device, 0 , nullptr);
 				// compile
-				cl::Program::Sources source(
-					1,
-					kernel_source);
-//					std::make_pair(
-//						kernel_source.c_str(), 
-//						kernel_source.size()));
+				cl::Program::Sources source(1, kernel_source);
 				cl::Program program_(context_, source);
-				program_.build(devices_);
+				try {
+					program_.build(devices_);
+				}
+				catch (cl::Error& er) {
+					std::cerr << "Exception(CL)  : " << er.what() << std::endl;
+					/*
+					if (er.err() == CL_BUILD_PROGRAM_FAILURE) {
+						// Determine the size of the log
+						size_t log_size;
+						clGetProgramBuildInfo(program, devices_id[0], CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+
+						// Allocate memory for the log
+						char* log = (char*)malloc(log_size);
+
+						// Get the log
+						clGetProgramBuildInfo(program, devices_id[0], CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+
+						// Print the log
+						printf("%s\n", log);
+					}
+					*/
+					continue;
+				}
 				// create the kernel
 				cl::Kernel kernel_(program_, "simple");
 				// prepare the buffers
