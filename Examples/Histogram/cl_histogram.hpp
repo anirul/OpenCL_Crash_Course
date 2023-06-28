@@ -28,8 +28,9 @@
 #define CL_HISTOGRAM_HEADER_DEFINED
 
 #include <string>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <chrono>
 #define CL_HPP_ENABLE_EXCEPTIONS
+#define CL_HPP_TARGET_OPENCL_VERSION 210
 #include <CL/cl2.hpp>
 
 class cl_histogram {
@@ -62,7 +63,7 @@ public:
 	void init(const std::string& cl_file);
 	void setup(const std::pair<unsigned int, unsigned int>& s);
 	void prepare(const std::vector<uint8_t>& input);
-	boost::posix_time::time_duration run(std::vector<unsigned int>& output);
+	std::chrono::nanoseconds run(std::vector<unsigned int>& output);
 };
 
 #endif // CL_HISTOGRAM_HEADER_DEFINED

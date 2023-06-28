@@ -29,6 +29,7 @@
 #include <fstream>
 #include <vector>
 #define CL_HPP_ENABLE_EXCEPTIONS
+#define CL_HPP_TARGET_OPENCL_VERSION 210
 #include <CL/cl2.hpp>
 #include <chrono>
 #include <random>
@@ -41,11 +42,11 @@ std::string kernel_source = R"cl(
 // very simple kernel
 
 __kernel void simple(
-      __global read_only float* in1,
-      __global read_only float* in2,
-      __global write_only float* out)
+      __global float* in1,
+      __global float* in2,
+      __global float* out)
 {
-   const uint pos = get_global_id(0);
+   uint pos = get_global_id(0);
    out[pos] = in1[pos] * in2[pos];
 }
 )cl";
@@ -92,22 +93,32 @@ int main(int ac, char** av) {
 				}
 				catch (cl::Error& er) {
 					std::cerr << "Exception(CL)  : " << er.what() << std::endl;
-					/*
 					if (er.err() == CL_BUILD_PROGRAM_FAILURE) {
 						// Determine the size of the log
 						size_t log_size;
-						clGetProgramBuildInfo(program, devices_id[0], CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+						clGetProgramBuildInfo(
+							program_(), 
+							device(), 
+							CL_PROGRAM_BUILD_LOG, 
+							0, 
+							NULL, 
+							&log_size);
 
 						// Allocate memory for the log
 						char* log = (char*)malloc(log_size);
 
 						// Get the log
-						clGetProgramBuildInfo(program, devices_id[0], CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+						clGetProgramBuildInfo(
+							program_(), 
+							device(), 
+							CL_PROGRAM_BUILD_LOG, 
+							log_size, 
+							log, 
+							NULL);
 
 						// Print the log
 						printf("%s\n", log);
 					}
-					*/
 					continue;
 				}
 				// create the kernel

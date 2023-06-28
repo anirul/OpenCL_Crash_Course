@@ -30,6 +30,7 @@
 #include <vector>
 #define CL_HPP_ENABLE_EXCEPTIONS
 #define CL_HPP_ENABLE_SIZE_T_COMPATIBILITY
+#define CL_HPP_TARGET_OPENCL_VERSION 210
 #include <CL/cl2.hpp>
 #ifdef __linux__
 #include <GL/glx.h>
@@ -59,9 +60,9 @@ mdy_(0)
 	int i = 0;
 	for (auto device : devices_) {
 		std::cout
-		<< "device name [" << i << "] : "
-		<< device.getInfo<CL_DEVICE_NAME>()
-		<< std::endl;
+			<< "device name [" << i << "] : "
+			<< device.getInfo<CL_DEVICE_NAME>()
+			<< std::endl;
 		i++;
 	}
 	// take the last device (work around Intel GPU)

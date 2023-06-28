@@ -26,10 +26,21 @@
  */
 
 #include <fstream>
+#include <iostream>
 #define CL_HPP_ENABLE_EXCEPTIONS
+#define CL_HPP_TARGET_OPENCL_VERSION 210
 #include <CL/cl2.hpp>
 
 #include "cl_histogram.hpp"
+
+std::ostream& operator<<(std::ostream& os, const std::vector<unsigned int>& v)
+{
+    for (int i = 0; i < v.size(); ++i) 
+	{
+	    os << "value(" << i << ")\t: "<< v[i] << "\n";
+	}
+    return os;
+}
 
 cl_histogram::cl_histogram(
 	bool gpu,
@@ -132,8 +143,7 @@ void cl_histogram::prepare(const std::vector<uint8_t>& input) {
 		sizeof(cl_uint) * 256);
 }
 
-boost::posix_time::time_duration cl_histogram::run(
-	std::vector<unsigned int>& output)
+std::chrono::nanoseconds cl_histogram::run(std::vector<unsigned int>& output)
 {
 	// luminosity
 	kernel_luminosity_.setArg(0, cl_buffer_image_);
@@ -147,7 +157,7 @@ boost::posix_time::time_duration cl_histogram::run(
 		nullptr,
 		&event_);
 	queue_.finish();
-	auto start = boost::posix_time::microsec_clock::universal_time();
+	auto start = std::chrono::high_resolution_clock::now();
 	// cleanup
 	kernel_init_.setArg(0, cl_buffer_histogram_partial_);
 	queue_.finish();
@@ -182,7 +192,7 @@ boost::posix_time::time_duration cl_histogram::run(
 		cl::NullRange,
 		nullptr,
 		&event_);
-	auto end = boost::posix_time::microsec_clock::universal_time();
+	auto end = std::chrono::high_resolution_clock::now();
 	if (output.size() != 256)
 		output.resize(256);
 	queue_.enqueueReadBuffer(
@@ -192,5 +202,6 @@ boost::posix_time::time_duration cl_histogram::run(
 		output.size() * sizeof(cl_uint),
 		&output[0]);
 	queue_.finish();
+	std::cout << output;
 	return (end - start);
 }
